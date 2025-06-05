@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Meus Pedidos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4 pb-2 border-bottom">Meus Pedidos</h1>
+
+    {% if pedidos %}
+        {% for pedido in pedidos %}
+            <div class="card mb-4 shadow-sm pedido-card">
+                <div class="card-header bg-light py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">Pedido <span class="text-primary">#{{ pedido.id }}</span></h5>
+                        <small class="text-muted">{{ pedido.data_criacao|date:"d/m/Y H:i" }}</small>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row gy-3">
+                        <div class="col-md-6 border-end">
+                            <h6 class="fw-semibold mb-3 text-secondary">Detalhes do Pedido:</h6>
+                            <p class="mb-2">
+                                <strong>Status:</strong> 
+                                <span class="badge 
+                                    {% if pedido.status == 'pago' %}bg-success
+                                    {% elif pedido.status == 'pendente' or pedido.status == 'aguardando_pagamento' %}bg-warning text-dark
+                                    {% elif pedido.status == 'enviado' %}bg-info text-dark
+                                    {% elif pedido.status == 'entregue' %}bg-primary
+                                    {% elif pedido.status == 'cancelado' %}bg-danger
+                                    {% else %}bg-secondary
+                                    {% endif %}">
+                                    {{ pedido.get_status_display }}
+                                </span>
+                            </p>
+                            <p class="mb-2"><strong>Total:</strong> <span class="fw-bold text-success">R$ {{ pedido.get_total_cost|floatformat:2 }}</span></p>
+                            <p class="mb-3"><strong>Método de Pagamento:</strong> {{ pedido.get_metodo_pagamento_display }}</p>
+                            
+                            <hr class="my-3 d-md-none"> <h6 class="fw-semibold mb-2 text-secondary">Endereço de Entrega:</h6>
+                            <p class="mb-1">{{ pedido.endereco }}</p>
+                            <p class="mb-1">{{ pedido.cidade }} - CEP: {{ pedido.cep }}</p>
+                            <p class="mb-0"><strong>Destinatário:</strong> {{ pedido.nome }}</p>
+                        </div>
+                        <div class="col-md-6 ps-md-4">
+                            <h6 class="fw-semibold mb-3 text-secondary">Itens Pedidos:</h6>
+                            {% if pedido.items.all %}
+                                <ul class="list-unstyled">
+                                    {% for item in pedido.items.all %}
+                                        <li class="mb-2 pb-2 border-bottom">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <strong class="d-block">{{ item.produto.nome }}</strong>
+                                                    <small class="text-muted">{{ item.quantidade }}x R$ {{ item.preco|floatformat:2 }}</small>
+                                                </div>
+                                                <span class="fw-medium">R$ {{ item.get_cost|floatformat:2 }}</span>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted">Nenhum item encontrado para este pedido.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info mt-3" role="alert">
+            Você ainda não fez nenhum pedido. <a href="{% url 'produtos:lista' %}" class="alert-link">Comece a comprar agora!</a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .pedido-card .card-header h5 {
+        font-size: 1.1rem;
+    }
+    .pedido-card .badge {
+        font-size: 0.9em;
+    }
+    .pedido-card p {
+        font-size: 0.95rem;
+    }
+    .pedido-card h6 {
+        font-size: 1rem;
+        margin-top: 0.5rem;
+    }
+    .border-end {
+        border-right: 1px solid #dee2e6 !important;
+    }
+    @media (max-width: 767.98px) { /* md breakpoint */
+        .border-end {
+            border-right: none !important;
+        }
+        .ps-md-4 {
+            padding-left: var(--bs-gutter-x, .75rem) !important; /* Reset padding for stacked columns */
+        }
+    }
+</style>
+{% endblock %}

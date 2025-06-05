@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %} {# Certifique-se de que load static está aqui se você usar imagens estáticas no futuro #}
+
+{% block title %}Pedido Realizado - Pague com Pix{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+  <div class="card mx-auto shadow-sm" style="max-width: 600px;">
+    <div class="card-body p-4 p-md-5">
+      <i class="bi bi-qr-code-scan text-success mb-3" style="font-size: 4.5rem;"></i>
+      <h1 class="mt-2 h3">Pedido #{{ pedido.id }} Recebido!</h1>
+      <p class="lead mb-4">Obrigado pela sua compra! Seu pedido foi registrado e está aguardando o pagamento via Pix.</p>
+      
+      <div class="alert alert-info" role="alert">
+        Para confirmar seu pedido, por favor, realize o pagamento de <strong class="fs-5">R$ {{ pedido.get_total_cost|floatformat:2 }}</strong>.
+      </div>
+      
+      {% if qr_code_base64 %}
+      <div class="my-4">
+        <h5 class="fw-normal">Escaneie o QR Code:</h5>
+        <img src="data:image/png;base64,{{ qr_code_base64 }}" alt="QR Code Pix" class="img-fluid" style="max-width: 280px; border: 1px solid #dee2e6; padding: 5px; border-radius: .375rem; margin-top: 0.5rem;">
+      </div>
+      {% else %}
+      <div class="alert alert-warning my-4" role="alert">
+        Não foi possível gerar o QR Code. Por favor, utilize o código "Copia e Cola" abaixo.
+      </div>
+      {% endif %}
+
+      {% if chave_pix_copia_cola %}
+      <div class="my-4">
+        <h5 class="fw-normal">Ou use o Pix Copia e Cola:</h5>
+        <div class="input-group mb-2">
+            <input type="text" class="form-control form-control-lg bg-light" value="{{ chave_pix_copia_cola }}" id="pixCopiaECola" readonly>
+            <button class="btn btn-outline-secondary" type="button" onclick="copiarPix()">
+                <i class="bi bi-clipboard-check-fill"></i> Copiar
+            </button>
+        </div>
+        <small class="form-text text-muted">Clique no botão para copiar o código.</small>
+      </div>
+      {% else %}
+      <div class="alert alert-danger my-4" role="alert">
+        Não foi possível gerar o código Pix "Copia e Cola". Entre em contato conosco.
+      </div>
+      {% endif %}
+      
+      <p class="mt-4"><strong>Nome do Beneficiário:</strong> {{ nome_beneficiario }}</p>
+      <hr>
+      <p class="mt-3 small text-muted">
+        Após realizar o pagamento, seu pedido será processado assim que o pagamento for confirmado em nosso sistema.
+        Geralmente, a confirmação do Pix é rápida. Guarde o comprovante de pagamento para sua referência.
+      </p>
+      <p class="text-danger small"><em>Se o pagamento não for identificado em 24 horas, o pedido poderá ser cancelado.</em></p>
+
+      <div class="mt-4 d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a href="{% url 'produtos:lista' %}" class="btn btn-primary btn-lg px-4 gap-3">Continuar comprando</a>
+        <a href="{% url 'pedidos:lista_meus_pedidos' %}" class="btn btn-outline-secondary btn-lg px-4">Ver Meus Pedidos</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function copiarPix() {
+  var copyText = document.getElementById("pixCopiaECola");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /* For mobile devices */
+  try {
+    var successful = document.execCommand("copy");
+    var msg = successful ? 'Código Pix Copiado!' : 'Não foi possível copiar.';
+    // Você pode usar uma notificação mais elegante do Bootstrap (toast) aqui em vez de alert.
+    alert(msg);
+  } catch (err) {
+    alert('Oops, não foi possível copiar o código.');
+  }
+}
+</script>
+{% endblock %}

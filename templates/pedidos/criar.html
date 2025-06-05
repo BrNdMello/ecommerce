@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mb-4">Checkout</h1>
+  
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Dados de entrega</h4>
+        </div>
+        <div class="card-body">
+          <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="mb-3">
+              <label for="{{ form.nome.id_for_label }}" class="form-label">Nome completo</label>
+              {{ form.nome }}
+              {{ form.nome.errors }}
+            </div>
+            <div class="mb-3">
+              <label for="{{ form.email.id_for_label }}" class="form-label">E-mail</label>
+              {{ form.email }}
+              {{ form.email.errors }}
+            </div>
+            <div class="mb-3">
+              <label for="{{ form.endereco.id_for_label }}" class="form-label">Endereço completo</label>
+              {{ form.endereco }}
+              {{ form.endereco.errors }}
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.cep.id_for_label }}" class="form-label">CEP</label>
+                {{ form.cep }}
+                {{ form.cep.errors }}
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.cidade.id_for_label }}" class="form-label">Cidade</label>
+                {{ form.cidade }}
+                {{ form.cidade.errors }}
+              </div>
+            </div>
+
+            <hr class="my-4">
+            <p class="text-muted small">Ao finalizar, você receberá as instruções para pagamento via Pix.</p>
+            <button type="submit" class="btn btn-success btn-lg w-100">Finalizar Pedido e Pagar com Pix</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Seu pedido</h4>
+        </div>
+        <div class="card-body">
+          <table class="table table-borderless">
+            {% for item in carrinho %}
+              <tr>
+                <td>{{ item.produto.nome }} <span class="text-muted">x {{ item.quantidade }}</span></td>
+                <td class="text-end">R${{ item.preco_total|floatformat:2 }}</td>
+              </tr>
+            {% endfor %}
+            <tr>
+              <td>Frete</td>
+              <td class="text-end">Grátis</td>
+            </tr>
+            <tr class="fw-bold">
+              <td>Total</td>
+              <td class="text-end">R${{ carrinho.get_total_price|floatformat:2 }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

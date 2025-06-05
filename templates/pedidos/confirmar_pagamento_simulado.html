@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Confirmar Pagamento Simulado{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mb-4">Confirmar Pagamento Simulado para o Pedido #{{ pedido.id }}</h1>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Resumo do Pedido</h5>
+      <p><strong>Total do Pedido:</strong> R$ {{ pedido.get_total_cost|floatformat:2 }}</p>
+      <p><strong>Itens:</strong></p>
+      <ul>
+        {% for item in pedido.items.all %}
+          <li>{{ item.produto.nome }} ({{ item.quantidade }}x) - R$ {{ item.get_cost|floatformat:2 }}</li>
+        {% endfor %}
+      </ul>
+      <hr>
+      <p>Esta é uma simulação de pagamento. Nenhum valor real será cobrado.</p>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success btn-lg">Simular Pagamento Bem-Sucedido</button>
+      </form>
+      <a href="{% url 'produtos:lista' %}" class="btn btn-secondary mt-2">Cancelar e Voltar aos Produtos</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

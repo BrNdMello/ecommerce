@@ -1,0 +1,60 @@
+<!-- templates/produtos/lista.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  {% if categoria %}{{ categoria.nome }}{% else %}Produtos{% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4>Categorias</h4>
+        </div>
+        <ul class="list-group">
+          <li class="list-group-item {% if not categoria %}active{% endif %}">
+            <a href="{% url 'produtos:lista' %}" class="text-decoration-none {% if not categoria %}text-white{% endif %}">Todos</a>
+          </li>
+          {% for c in categorias %}
+            <li class="list-group-item {% if categoria.slug == c.slug %}active{% endif %}">
+              <a href="{{ c.get_absolute_url }}" class="text-decoration-none {% if categoria.slug == c.slug %}text-white{% endif %}">{{ c.nome }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    
+    <div class="col-md-9">
+      <div class="row">
+        {% for produto in produtos %}
+          <div class="col-md-4 mb-4">
+            <div class="card h-100">
+              {% if produto.imagem %}
+                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="card-img-top">
+              {% else %}
+                <img src="{% static 'img/no_image.png' %}" alt="Sem imagem" class="card-img-top">
+              {% endif %}
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ produto.nome }}</h5>
+                <p class="card-text text-muted">R${{ produto.preco }}</p>
+                <div class="mt-auto">
+                  <a href="{{ produto.get_absolute_url }}" class="btn btn-outline-primary mb-2 w-100">
+                    Ver detalhes
+                  </a>
+                  <form action="{% url 'carrinho:adicionar' produto.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success w-100">
+                      <i class="bi bi-cart-plus"></i> Adicionar ao Carrinho
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

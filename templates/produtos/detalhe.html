@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  {{ produto.nome }}
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        {% if produto.imagem %}
+          <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="card-img-top">
+        {% else %}
+          <img src="{% static 'img/no_image.png' %}" alt="Sem imagem" class="card-img-top">
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-6">
+      <h1>{{ produto.nome }}</h1>
+      <h4 class="text-muted">R${{ produto.preco }}</h4>
+      <p>{{ produto.descricao }}</p>
+
+      <a href="{% url 'produtos:lista' %}" class="btn btn-secondary mt-3">Voltar</a>
+    </div>
+  </div>
+{% endblock %}

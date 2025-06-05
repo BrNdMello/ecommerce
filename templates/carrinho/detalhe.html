@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  Seu carrinho de compras
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="mb-4">Seu carrinho de compras</h1>
+    <div class="row">
+      <div class="col-md-8">
+        {% if carrinho|length > 0 %} {# Verifica se o carrinho não está vazio #}
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h4 class="mb-0">Itens no carrinho</h4>
+            </div>
+            <div class="card-body">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Preço unitário</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in carrinho %} {# Itera sobre os itens do carrinho #}
+                    {% with produto=item.produto %}
+                      <tr>
+                        <td>
+                          <a href="{{ produto.get_absolute_url }}">
+                            {% if produto.imagem %}
+                              <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="img-thumbnail" style="max-width: 80px;">
+                            {% else %}
+                              <img src="{% static 'img/no_image.png' %}" alt="Sem imagem" class="img-thumbnail" style="max-width: 80px;">
+                            {% endif %}
+                            {{ produto.nome }}
+                          </a>
+                        </td>
+                        <td>{{ item.quantidade }}</td>
+                        <td>R${{ item.preco|floatformat:2 }}</td> {# Preço unitário #}
+                        <td>R${{ item.preco_total|floatformat:2 }}</td> {# Subtotal do item #}
+                        <td>
+                          <form action="{% url 'carrinho:remover' produto.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger" title="Remover item">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                    {% endwith %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+              <a href="{% url 'produtos:lista' %}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i> Continuar comprando
+              </a>
+              <a href="{% url 'pedidos:criar' %}" class="btn btn-success">
+                Finalizar compra <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        {% else %}
+          <div class="alert alert-info">
+            <p>Seu carrinho está vazio.</p>
+            <a href="{% url 'produtos:lista' %}" class="btn btn-primary">Continuar comprando</a>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if carrinho|length > 0 %}
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h4 class="mb-0">Resumo da compra</h4>
+            </div>
+            <div class="card-body">
+              <table class="table table-borderless">
+                <tr>
+                  <td>Subtotal</td>
+                  <td class="text-end">R${{ carrinho.get_total_price|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                  <td>Frete</td>
+                  <td class="text-end">Grátis</td>
+                </tr>
+                <tr class="fw-bold">
+                  <td>Total</td>
+                  <td class="text-end">R${{ carrinho.get_total_price|floatformat:2 }}</td>
+                </tr>
+              </table>
+            </div>
+            <div class="card-footer">
+              <a href="{% url 'pedidos:criar' %}" class="btn btn-success d-block">
+                Finalizar compra <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

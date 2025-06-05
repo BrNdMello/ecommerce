@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Pedido Realizado - Pague com Pix{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+  <div class="card mx-auto" style="max-width: 600px;">
+    <div class="card-body">
+      <i class="bi bi-phone-fill text-success" style="font-size: 5rem;"></i> <h1 class="mt-3">Pedido #{{ pedido.id }} Recebido!</h1>
+      <p class="lead">Obrigado pela sua compra! Seu pedido foi registrado e está aguardando o pagamento via Pix.</p>
+      
+      <h4>Instruções para Pagamento com Pix:</h4>
+      <p>Para confirmar seu pedido, por favor, realize o pagamento de <strong>R$ {{ pedido.get_total_cost|floatformat:2 }}</strong> utilizando a chave Pix abaixo ou escaneando o QR Code (se disponível).</p>
+      
+      <div class="my-3 p-3 border rounded bg-light">
+        <p><strong>Chave Pix (CNPJ/Celular/Email/Aleatória):</strong> <kbd>SUA_CHAVE_PIX_AQUI</kbd></p>
+        </div>
+
+      <div class="my-3">
+        <p><em>(Se você tiver um QR Code, ele pode ser exibido aqui)</em></p>
+      </div>
+      
+      <p><strong>Nome do Beneficiário:</strong> NOME DA SUA LOJA OU SEU NOME</p>
+      <p class="mt-3">
+        Após realizar o pagamento, seu pedido será processado assim que o pagamento for confirmado em nosso sistema.
+        Geralmente, a confirmação do Pix é rápida.
+      </p>
+      <p><em>Guarde o comprovante de pagamento para sua referência.</em></p>
+      <p class="text-muted small"><em>Se o pagamento não for identificado em 24 horas, o pedido poderá ser cancelado.</em></p>
+
+      <div class="mt-4">
+        <a href="{% url 'produtos:lista' %}" class="btn btn-primary">Continuar comprando</a>
+        <a href="{% url 'pedidos:lista_meus_pedidos' %}" class="btn btn-info">Ver Meus Pedidos</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+<!-- templates/categorias/lista.html -->
+{% extends 'base.html' %}
+
+{% block title %}Categorias{% endblock %}
+
+{% block content %}
+  <h1>Categorias</h1>
+  <ul>
+    {% for categoria in categorias %}
+      <li><a href="{{ categoria.get_absolute_url }}">{{ categoria.nome }}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
